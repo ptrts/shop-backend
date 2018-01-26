@@ -1,4 +1,4 @@
-rootProject.name = 'reactor-test'
+rootProject.name = 'shop-backend'
 
 new File(rootProject.projectDir, 'projects').eachDir {
     def path = ':' + it.name
