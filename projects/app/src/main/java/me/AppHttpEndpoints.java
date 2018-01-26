@@ -1,6 +1,6 @@
 package me;
 
-import me.model.User;
+import me.model.Product;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,29 +30,29 @@ public class AppHttpEndpoints extends AbstractSmartLifeCycle {
     private NettyContext nettyContext = null;
     
     @Autowired
-    private AppServiceAsync appServiceAsync;
+    private ProductServiceAsync productServiceAsync;
 
-    private Mono<ServerResponse> getPerson(ServerRequest request) {
+    private Mono<ServerResponse> getProduct(ServerRequest request) {
 
-        String userIdStr = request.pathVariable("id");
+        String idStr = request.pathVariable("id");
         
-        Long userId = Long.valueOf(userIdStr);
+        Long id = Long.valueOf(idStr);
 
-        Mono<User> userMono = appServiceAsync.getUser(userId);
+        Mono<Product> productMono = productServiceAsync.getProduct(id);
 
-        return userMono
+        return productMono
                 
                 // Если пользователь найден, то сделать из него мону преобразования этого 
                 // пользователя в ServerResponse
                 .flatMap(
 
-                        user -> {
+                        product -> {
 
                             Mono<ServerResponse> serverResponseMono =
                                     ServerResponse
                                             .ok()
                                             .contentType(APPLICATION_JSON)
-                                            .syncBody(user);
+                                            .syncBody(product);
 
                             return serverResponseMono;
                         }
@@ -76,7 +76,7 @@ public class AppHttpEndpoints extends AbstractSmartLifeCycle {
                                         accept(APPLICATION_JSON)
                                 )
                         ,
-                        this::getPerson
+                        this::getProduct
                 );
 
         HttpHandler httpHandler = RouterFunctions.toHttpHandler(route);

@@ -1,6 +1,6 @@
 package me;
 
-import me.model.User;
+import me.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -8,10 +8,10 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
 @Component
-public class AppServiceAsync {
+public class ProductServiceAsync {
     
     @Autowired
-    private AppServiceSync appServiceSync;
+    private ProductServiceSync productServiceSync;
 
     @Autowired
     @Qualifier("request")
@@ -21,7 +21,7 @@ public class AppServiceAsync {
     @Qualifier("response")
     private Scheduler responseScheduler;
     
-    public Mono<User> getUser(Long id) {
+    public Mono<Product> getProduct(Long id) {
         
         return 
                 Mono.fromSupplier(
@@ -31,7 +31,7 @@ public class AppServiceAsync {
                         //          выполнит указанный ниже Supplier
                         //          получит возвращенное им значение
                         //          оповестит подписчика о поступлении нового значения
-                        () -> appServiceSync.getUser(id)
+                        () -> productServiceSync.getProduct(id)
                 )
                 .subscribeOn(requestScheduler)
                 .publishOn(responseScheduler);
